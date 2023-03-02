@@ -1,0 +1,122 @@
+local xsize = 1525
+local ysize = 60
+local textcolor = Color3.fromRGB(150, 150, 150)
+local color1 = Color3.fromRGB(89, 89, 89)
+local color2 = Color3.fromRGB(0, 0, 0)
+
+local Cmdscreen = Instance.new("ScreenGui")
+local CmdBarBackground = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local Main = Instance.new("Frame")
+local UICorner_2 = Instance.new("UICorner")
+local UIGradient = Instance.new("UIGradient")
+local TextBox = Instance.new("TextBox")
+pcall(function()
+
+Cmdscreen.Name = "Cmdscreen"
+Cmdscreen.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+Cmdscreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+CmdBarBackground.Name = "CmdBarBackground"
+CmdBarBackground.Parent = Cmdscreen
+CmdBarBackground.BackgroundColor3 = color1
+CmdBarBackground.Position = UDim2.new(0.5, -xsize/2, 1, 0)
+CmdBarBackground.Size = UDim2.new(0, xsize, 0, ysize)
+
+UICorner.CornerRadius = UDim.new(0, 5)
+UICorner.Parent = CmdBarBackground
+
+Main.Name = "Main"
+Main.Parent = CmdBarBackground
+Main.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+Main.Position = UDim2.new(0, 2, 0, 2)
+Main.Size = UDim2.new(1, -4, 1, -4)
+
+UICorner_2.CornerRadius = UDim.new(0, 5)
+UICorner_2.Parent = Main
+
+UIGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0.00, color1),
+	ColorSequenceKeypoint.new(1.00, color2)
+}
+UIGradient.Rotation = 90
+UIGradient.Parent = Main
+
+TextBox.Parent = Main
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.BackgroundTransparency = 1.000
+TextBox.Size = UDim2.new(1, 0, 1, 0)
+TextBox.Font = Enum.Font.Ubuntu
+TextBox.Text = ""
+TextBox.TextColor3 = textcolor
+TextBox.TextScaled = true
+TextBox.TextSize = 14.000
+TextBox.TextWrapped = true
+
+
+local colors = {
+	color1,
+	color2
+}
+
+local border = CmdBarBackground
+local main = border.Main
+local text = main.TextBox
+local plrs = game:GetService('Players')
+local tween = game:GetService('TweenService')
+local uis = game:GetService('UserInputService')
+local info = TweenInfo.new(.3, Enum.EasingStyle.Quint) --(SPEED, STYLE)
+local show = tween:Create(border, info, {Position = UDim2.new(.5, -border.AbsoluteSize.X/2, 0.05, -60)})
+local hide = tween:Create(border, info, {Position = UDim2.new(.5, -border.AbsoluteSize.X/2, 1, 0)})
+local tweening = false
+coroutine.wrap(function()
+	while true do
+		for i,v in pairs(colors) do
+			local butt = tween:Create(border, TweenInfo.new(.8, Enum.EasingStyle.Linear), {BackgroundColor3 = v})
+			butt:Play()
+			butt.Completed:Wait()
+		end
+	end
+end)()
+
+function toggle()
+	if not tweening then
+		tweening = true
+		if border.Position.X.Offset == 0 then
+			hide:Play()
+			text:ReleaseFocus()
+			text.Text = ''
+			hide.Completed:Wait()
+		else
+			show:Play()
+			text:CaptureFocus()
+			show.Completed:Wait()
+		end
+		tweening = false
+	end
+end
+
+text.FocusLost:Connect(function(enterPressed)
+	tweening = true
+	if enterPressed then
+		plrs:Chat(text.Text)
+	end
+	hide:Play()
+	text:ReleaseFocus()
+	text.Text = ''
+	hide.Completed:Wait()
+	tweening = false
+end)
+uis.InputBegan:Connect(function(input, gp)
+	if not gp then
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			local key = input.KeyCode
+			if key == Enum.KeyCode.Quote then
+				game:GetService'RunService'.Heartbeat:Wait()
+				toggle()
+			end
+		end
+	end
+end)
+game:GetService("Players").LocalPlayer.PlayerGui.Cmdscreen.ResetOnSpawn = false
+end)
