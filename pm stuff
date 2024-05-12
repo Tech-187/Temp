@@ -1,5 +1,6 @@
 shared.pmstuff = "ก็็็                                                                                                    ก็็็                                                                                                                                                                                                                   "
 shared.pmstuff2 = "ก็็็                                                                                                    ก็็็        "
+shared.maxcharsforchatbox = "ก็็็                                                                                                    ก็็็        ก็็็                                                                                " -- maximum chars that fit in the chatbox, Idk do something with it if it is useful eh
 
 -- non-exploit pm kick string >>> ก็็็                                                                                                    ก็็็        
 
